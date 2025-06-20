@@ -1,14 +1,15 @@
 library(shiny)
 library(readr)
 library(rlang)
+source("simulator.R")
 
 # ---- globals
 
+N_SECTORS <- 35 * 2
 MIPS_BR <- read_rds("data/mips_br.Rds")
 STATES <- names(MIPS_BR)
 
-x <- get_Z_A_L_f_x_multipliers(state)
-
+x <- get_ZALfx_multipliers(MIPS_BR[["sinaloa"]], N_SECTORS)
 
 # ---- app
 
