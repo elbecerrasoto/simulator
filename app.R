@@ -9,18 +9,6 @@ N_SECTORS <- 35 * 2
 MIPS_BR <- read_rds("data/mips_br.Rds")
 STATES <- names(MIPS_BR)
 
-# current_state <- get_ZALfx_multipliers(
-#   MIPS_BR[["morelia"]],
-#   N_SECTORS
-# )
-#
-# simulate_demand_shocks(rep(2.0, N_SECTORS),
-#   current_state$L,
-#   current_state$f,
-#   current_state$x,
-#   shocks_are_multipliers = TRUE
-# )
-
 # ---- app
 
 ui <- fluidPage(
@@ -45,7 +33,7 @@ server <- function(input, output, session) {
 
   shock_multipliers <- reactive(rep(input$shock_multiplier, N_SECTORS))
 
-  results <- reactive(
+  results_raw <- reactive(
     simulate_demand_shocks(
       shock_multipliers(),
       L(),
@@ -55,6 +43,13 @@ server <- function(input, output, session) {
     )
   )
 
+  results <- reactive({
+    results_raw() |>
+      mutate(
+        sector = multipliers()$sector,
+        region = multipliers()$region
+      )
+  })
 
   output$results <- renderDataTable(results())
 }
