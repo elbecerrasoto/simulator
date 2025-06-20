@@ -4,6 +4,6 @@ help:
 
 .PHONY style:
 style:
-	Rscript -e 'styler::style_dir(".", recursive = FALSE)'
+	Rscript -e 'styler::style_dir(".")'
 
 

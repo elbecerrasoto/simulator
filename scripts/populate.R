@@ -37,7 +37,7 @@ main <- function(state_code) {
   xlsx_i <- get_xlsx(url_i, DATA_DIR, download = DOWNLOAD)
   out_tib <- clean_mipbr_xlsx(xlsx_i)
 
-  if(WRITE_TO_TSV) {
+  if (WRITE_TO_TSV) {
     write_tsv(out_tib, tsv_i)
   }
 
