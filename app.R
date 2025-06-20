@@ -25,11 +25,14 @@ STATES <- names(MIPS_BR)
 
 ui <- fluidPage(
   selectInput("state", "Choose state to simulate:", STATES),
-  textOutput("greeting")
+  dataTableOutput("dynamic"),
+  textOutput("debug")
 )
 
 server <- function(input, output, session) {
-  output$greeting <- renderText(input$state)
+  Z_aug <- reactive(MIPS_BR[[input$state]])
+  ZALfx_multipliers <- reactive(get_ZALfx_multipliers(Z_aug(), N_SECTORS))
+  output$dynamic <- renderDataTable(ZALfx_multipliers()$multipliers)
 }
 
 shinyApp(ui, server)
