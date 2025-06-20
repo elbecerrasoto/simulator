@@ -28,6 +28,7 @@ ui <- fluidPage(
   sliderInput("shock_multiplier", "Increase on final demand by sector.\n(Multiply by this amount.)",
     value = 1.01, min = 0.50, max = 2.00
   ),
+  dataTableOutput("results"),
   dataTableOutput("multipliers")
 )
 
@@ -43,15 +44,19 @@ server <- function(input, output, session) {
   output$multipliers <- renderDataTable(multipliers())
 
   shock_multipliers <- reactive(rep(input$shock_multiplier, N_SECTORS))
+
   results <- reactive(
-    simultate_demand_shocks(
+    simulate_demand_shocks(
       shock_multipliers(),
       L(),
       f(),
       x(),
-      shocks_are_mulipliers = TRUE
+      shocks_are_multipliers = TRUE
     )
   )
+
+
+  output$results <- renderDataTable(results())
 }
 
 shinyApp(ui, server)
