@@ -3,6 +3,17 @@ library(leontief)
 library(tidyverse)
 library(glue)
 
+tib2mat <- function(tib, drop_names = FALSE) {
+  mat <- tib |>
+    select(where(is.numeric)) |>
+    as.matrix()
+  if (drop_names) {
+    colnames(mat) <- NULL
+    rownames(mat) <- NULL
+  }
+  mat
+}
+
 get_ZALfx_multipliers <- function(Z_aug, n_sectors) {
   # ---- globals
 
@@ -13,16 +24,6 @@ get_ZALfx_multipliers <- function(Z_aug, n_sectors) {
 
   # ---- helpers
 
-  tib2mat <- function(tib, drop_names = FALSE) {
-    mat <- tib |>
-      select(where(is.numeric)) |>
-      as.matrix()
-    if (drop_names) {
-      colnames(mat) <- NULL
-      rownames(mat) <- NULL
-    }
-    mat
-  }
 
   normalize_sector <- function(sector_inputs, sector, x) {
     AVOID_UNDEF <- 1
@@ -151,9 +152,11 @@ get_ZALfx_multipliers <- function(Z_aug, n_sectors) {
 }
 
 simulate_demand_shocks <-
-  function(shocks, x_old, f_old,
+  function(shocks, L, f_old, x_old,
            shocks_are_multipliers = FALSE,
            shocks_are_total_demand = FALSE) {
+    Lm <- L |> tib2mat()
+
     if (shocks_are_multipliers) {
       f_new <- shocks * f_old
     } else if (shocks_are_total_demand) {
