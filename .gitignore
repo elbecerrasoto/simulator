@@ -6,3 +6,5 @@
 *.xlsx
 *.Rproj
 *.tsv
+
+rsconnect
