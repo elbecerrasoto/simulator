@@ -19,12 +19,9 @@ L <- out$L
 f <- out$f
 x <- out$x
 
-names(L)
-
 simulate_demand_shocks(shocks,
   L,
   f,
   x,
   shocks_are_multipliers = TRUE
-) |>
-  view()
+)

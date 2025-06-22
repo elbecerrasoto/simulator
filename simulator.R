@@ -170,5 +170,5 @@ simulate_demand_shocks <-
     delta_rel <-
       if_else(x_old != 0, (delta + x_old) / x_old, (delta + x_old) / 1)
 
-    tibble(f_old, x_old, f_new, x_new, delta, delta_rel)
+    tibble(f_new, x_new, delta_rel, delta, f_old, x_old, sector = names(L))
   }
