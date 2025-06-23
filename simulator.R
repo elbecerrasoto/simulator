@@ -133,6 +133,13 @@ get_ZALfx_multipliers <- function(Z_aug, n_sectors) {
   link_class[BL >= 1 & FL < 1] <- "supply_dependent"
   link_class[BL >= 1 & FL >= 1] <- "dependent"
 
+  link_class <- factor(link_class, levels = c(
+    "independent",
+    "demand_dependent",
+    "supply_dependent",
+    "dependent"
+  ))
+
   multipliers <- multipliers |>
     mutate(
       link_backward = BL,
