@@ -6,7 +6,7 @@ library(tidyverse)
 source("simulator.R")
 
 
-CURRENT <- "sinaloa"
+CURRENT <- "chiapas"
 N_SECTORS <- 35 * 2
 MIPS_BR <- read_rds("data/mips_br.Rds")
 STATES <- names(MIPS_BR)
@@ -15,9 +15,6 @@ Z_aug <- MIPS_BR[[CURRENT]]
 out <- get_ZALfx_multipliers(Z_aug, N_SECTORS)
 
 E_imss <- read_tsv("data/employment_sinaloa_imss.tsv")
-# e <- if_else(out$x != 0, E_imss$employment / out$x, E_imss$employment)
-# e_hat <- diag(e)
-# Tm <- e_hat %*% tib2mat(out$L)
 
 population <- read_tsv("data/population_2020.tsv")
 pmex <- population$n |> sum()
@@ -33,6 +30,21 @@ pstate <- population |>
   filter(state == CURRENT) |>
   pull(n)
 
-
-resto_E <- (pmex - pstate) * employment_rate * employment_structure
 state_E <- pstate * employment_rate * employment_structure
+resto_E <- (pmex - pstate) * employment_rate * employment_structure
+E <- c(state_E, resto_E)
+
+get_T <- function(E, L, x) {
+  e <- if_else(x != 0, E / x, E)
+  e_hat <- diag(e)
+  Tm <- e_hat %*% tib2mat(L)
+
+  as_tibble(Tm) |> set_names(names(L))
+}
+
+Ttib <- get_T(E, out$L, out$x)
+
+shocks <- rep(1.0, length(out$x))
+shocks[[22]] <- 2.0
+
+simulate_demand_shocks(shocks, out$L, out$f, out$x, shocks_are_multipliers = TRUE)
